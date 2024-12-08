@@ -3,13 +3,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './src/config/db.js';  // Add .js extension
 import authRoutes from './src/routes/authRoutes.js';
-import sellerRoutes from './routes/sellerRoutes.js'; // Import seller routes
+import sellerRoutes from './src/routes/sellerRoutes.js'; // Import seller routes
 
 
 // Initialize environment variables
 dotenv.config();
 
-// Connect to MongoDB
 connectDB();
 
 const app = express();

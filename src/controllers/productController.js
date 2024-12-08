@@ -7,7 +7,7 @@ import Product from '../models/Product.js';
 // @access  Private (Seller)
 export const listProducts = async (req, res) => {
   try {
-    const products = await Product.find({ seller: req.user.userId });
+    const products = await Product.find({ seller: req.user._id });
     res.status(200).json(products);
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -27,8 +27,9 @@ export const addProduct = async (req, res) => {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
+    // Create new product
     const newProduct = new Product({
-      seller: req.user.userId,
+      seller: req.user._id,
       name,
       description,
       price,
@@ -53,13 +54,14 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, category, images, stock } = req.body;
 
-    const product = await Product.findOne({ _id: id, seller: req.user.userId });
+    // Find product by ID and ensure it belongs to the seller
+    const product = await Product.findOne({ _id: id, seller: req.user._id });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Update fields if they are provided
+    // Update fields if provided
     if (name) product.name = name;
     if (description) product.description = description;
     if (price !== undefined) product.price = price;
@@ -82,7 +84,8 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const product = await Product.findOneAndDelete({ _id: id, seller: req.user.userId });
+    // Find and delete the product
+    const product = await Product.findOneAndDelete({ _id: id, seller: req.user._id });
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
